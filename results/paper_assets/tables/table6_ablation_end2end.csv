@@ -1,0 +1,4 @@
+exp_dir,mean_wt_tc_et,WT,TC,ET,RC
+mixed_ens4_nonjitEns3_plus_jit8seed2025_thr0p35_rcmin120,0.830530,0.897420,0.795014,0.799156,0.774631
+jit8_single_seed2025_thr0p35_rcmin120,0.817825,0.893382,0.777931,0.782161,0.765154
+baseline_single_seed1337_thr0p35_rcmin120,0.813581,0.891481,0.772882,0.776380,0.754635

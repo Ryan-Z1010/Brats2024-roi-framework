@@ -1,0 +1,7 @@
+Metric,Value
+n_cases,144
+coverage_mean,0.998973
+coverage_p05,0.995910
+coverage_p10,0.999803
+coverage_min,0.962173
+coverage_max,1.000000

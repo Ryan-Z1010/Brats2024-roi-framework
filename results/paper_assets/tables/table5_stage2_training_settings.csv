@@ -1,0 +1,13 @@
+Setting,Value
+Model base_channels,48
+ROI size,128^3
+Batch size,2
+Learning rate,0.00015
+Optimizer,see config.yaml
+Weight decay,1e-05
+Epochs (max),240
+Scheduler,CosineAnnealingLR
+AMP,True
+Early stopping patience,40
+Seed,1337
+Num workers,8

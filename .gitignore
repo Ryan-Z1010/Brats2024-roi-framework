@@ -1,0 +1,17 @@
+# data / outputs (do not upload)
+data/raw/
+data/preprocessed/
+runs/
+nnUNet_results/
+results/*pred*/
+results/*prediction*/
+results/**/*.nii.gz
+
+# model weights
+*.pt
+*.pth
+*.ckpt
+
+# python cache
+__pycache__/
+*.pyc

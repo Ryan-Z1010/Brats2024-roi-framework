@@ -1,0 +1,25 @@
+seed: 2025
+
+data:
+  root: data/preprocessed/npy_coarse96_v1
+  splits_dir: data/splits
+  batch_size: 2
+  num_workers: 8
+
+model:
+  base_channels: 16
+
+train:
+  epochs: 200
+  lr: 2.0e-4
+  weight_decay: 1.0e-5
+  amp: true
+  early_stop_patience: 30
+
+loss:
+  bce_weight: 1.0
+  dice_weight: 1.0
+
+augment:
+  enable: true
+  flip_prob: 0.5

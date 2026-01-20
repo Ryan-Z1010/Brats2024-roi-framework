@@ -1,0 +1,6 @@
+Label ID,Name,Included in WT,Included in TC,ET,RC
+0,Background,,,,
+1,NETC,WT,TC,,
+2,SNFH,WT,,,
+3,ET,WT,TC,ET,
+4,RC,,,,RC

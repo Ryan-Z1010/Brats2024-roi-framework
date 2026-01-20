@@ -1,0 +1,4 @@
+Split,#Patients,#Cases
+train,552,1206
+val,61,144
+total,613,1350

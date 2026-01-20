@@ -1,0 +1,18 @@
+{
+  "stats": {
+    "n_cases": 144,
+    "n_fallback_center": 1,
+    "coarse_size": 96,
+    "roi_size": 128,
+    "thr": 0.5,
+    "stage1_ckpt": "runs/stage1/20260102_060312_coarse96_bs2_lr0.0002/checkpoints/best.pt",
+    "full_root": "data/preprocessed/npy_full_v1/val",
+    "split_list": "data/splits/val.txt",
+    "eval_coverage": true,
+    "n_empty_gt": 0,
+    "coverage_mean": 0.9989733739119675,
+    "coverage_p05": 0.9959098153365694,
+    "coverage_p10": 0.9998026979270378,
+    "coverage_min": 0.9621729383156004
+  }
+}

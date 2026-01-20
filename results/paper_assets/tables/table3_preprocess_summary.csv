@@ -1,0 +1,10 @@
+Item,Value
+Modalities,"T1n, T1c, T2w, T2-FLAIR"
+Intensity clipping,0.5–99.5 percentile (per modality)
+Normalization,z-score (per modality)
+Storage format,".npz with keys: img (float32), seg (uint8)"
+Full-volume root,"data/preprocessed/npy_full_v1/{train,val}/"
+ROI128 root (non-jitter),"data/preprocessed/npy_roi128_v1/{train,val}/"
+ROI128 root (jitter train),data/preprocessed/npy_roi128_jit8_v1/train/
+ROI size,128^3
+Coarse size (Stage1),96^3
