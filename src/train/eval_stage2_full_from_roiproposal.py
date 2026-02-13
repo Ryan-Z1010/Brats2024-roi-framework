@@ -1,3 +1,4 @@
+from src.postprocess.rc_lcf import load_lcf, apply_lcf
 import argparse, json, csv
 from pathlib import Path
 import numpy as np
@@ -123,6 +124,9 @@ def load_proposals(csv_path: str):
 @torch.no_grad()
 def main():
     ap = argparse.ArgumentParser()
+    ap.add_argument("--rc_filter", default="minvox", choices=["none","minvox","lcf","hybrid"])
+    ap.add_argument("--lcf_model", default="", help="path to lcf .pt")
+    ap.add_argument("--lcf_thr", type=float, default=0.5)
     ap.add_argument("--full_root", required=True, help="data/preprocessed/npy_full_v1/val")
     ap.add_argument("--val_list", required=True, help="data/splits/val.txt")
     ap.add_argument("--proposal_csv", required=True, help="results/.../val_roi128.csv")
@@ -148,6 +152,12 @@ def main():
 
     prop = load_proposals(args.proposal_csv)
 
+    lcf_pack = None
+    if args.rc_filter in ["lcf","hybrid"]:
+        assert args.lcf_model, "--lcf_model is required for rc_filter=lcf/hybrid"
+        lcf_pack = load_lcf(args.lcf_model, device="cpu")
+
+
     case_ids = [l.strip() for l in Path(args.val_list).read_text().splitlines() if l.strip()]
     full_root = Path(args.full_root)
 
@@ -171,13 +181,29 @@ def main():
         crop_img, sl_full, sl_crop = center_crop_with_pad(img, center, args.roi_size, pad_val=0.0)
 
         x = torch.from_numpy(crop_img).unsqueeze(0).to(device)
-        probs = predict_probs_ensemble(models, x)
-        pred_roi = torch.argmax(probs, dim=1).squeeze(0).detach().cpu().numpy().astype(np.uint8)
+        
+        probs = predict_probs_ensemble(models, x)  # (1,5,roi,roi,roi)
+        pred_roi = torch.argmax(probs, dim=1).squeeze(0).cpu().numpy().astype(np.uint8)
+
+        # prob map for RC (channel 4)
+        rc_prob_roi = probs.squeeze(0)[4].detach().cpu().numpy().astype(np.float32)
 
         pred_full = np.zeros_like(gt, dtype=np.uint8)
         pred_full[sl_full] = pred_roi[sl_crop]
 
-        pred_full = postprocess_rc_only(pred_full, args.rc_min_vox)
+        rc_prob_full = np.zeros_like(gt, dtype=np.float32)
+        rc_prob_full[sl_full] = rc_prob_roi[sl_crop]
+
+        # rc filtering
+        if args.rc_filter == "none":
+            pass
+        elif args.rc_filter == "minvox":
+            pred_full = postprocess_rc_only(pred_full, args.rc_min_vox)
+        elif args.rc_filter == "lcf":
+            pred_full = apply_lcf(pred_full, rc_prob_full, lcf_pack, thr=args.lcf_thr, device="cpu")
+        elif args.rc_filter == "hybrid":
+            pred_full = apply_lcf(pred_full, rc_prob_full, lcf_pack, thr=args.lcf_thr, device="cpu")
+            pred_full = postprocess_rc_only(pred_full, args.rc_min_vox)
 
         if args.save_nii:
             import nibabel as nib

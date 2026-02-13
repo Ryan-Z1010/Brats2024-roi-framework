@@ -15,3 +15,6 @@ results/**/*.nii.gz
 # python cache
 __pycache__/
 *.pyc
+!results/lcf/lcf_rc.pt
+README.md.bak
+README.md.bak

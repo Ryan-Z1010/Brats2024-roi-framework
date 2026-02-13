@@ -2,7 +2,7 @@
 
 It includes the training/evaluation code, configuration files, split lists, ROI proposal CSVs, and table-generation scripts used to produce the results reported in the paper (internal patient-level split: 1206 train / 144 val).
 
-Important: Due to BraTS data licensing and storage size, this repository does not include raw MRI data, preprocessed tensors, checkpoints, or predictions.
+Important: Due to BraTS data licensing and storage size, this repository does not include raw MRI data, preprocessed tensors, Stage-1/Stage-2 segmentation checkpoints, or full prediction volumes. We include the lightweight RC learned component filter (LCF) model used in post-processing (results/lcf/lcf_rc.pt) and its training script (scripts/rc_lcf/train_rc_lcf.py).
 
 ## 1) What is included
 
@@ -15,6 +15,8 @@ Utilities: src/utils/
 Configs (all runs are driven by config files): configs/
 Split lists (patient-level): data/splits/train.txt, data/splits/val.txt
 Stage 1 ROI proposals (CSV, end-to-end evaluation uses thr=0.35): results/roi_proposals/
+RC learned component filter (LCF) post-processing: src/postprocess/rc_lcf.py, results/lcf/lcf_rc.pt, scripts/rc_lcf/train_rc_lcf.py
+Lesion-wise evaluation: scripts/eval_lesionwise_val.py
 Paper tables (CSV): results/paper_assets/tables/
 nnU-Net helper scripts (dataset conversion + split + voxel-Dice eval): scripts/nnunet/
 Paper asset scripts: scripts/make_paper_assets.py, scripts/90_make_paper_tables.py, scripts/paper/
@@ -23,7 +25,7 @@ Paper asset scripts: scripts/make_paper_assets.py, scripts/90_make_paper_tables.
 
 BraTS 2024 GLI raw data (*.nii.gz)
 Preprocessed NPZ tensors (*.npz)
-Model checkpoints (*.pt, *.pth)
+Segmentation model checkpoints (*.pt, *.pth)
 nnU-Net preprocessed arrays (*.b2nd)
 Predictions (*.nii.gz)
 
@@ -124,11 +126,44 @@ nnU-Net v2 3d_fullres baseline
 scripts/make_paper_assets.py
 scripts/90_make_paper_tables.py
 
-## 9) Notes on evaluation
+### 8.1 RC post-processing ablation (Table 6B)
+Note: segmentation checkpoints and full predictions are not shipped in this repository. Provide ckpt paths (or train them) to run the following commands.
 
+Example (mixed Stage-2 ROI ensemble used in the manuscript):
+CKPTS="runs/stage2/20251231_023529_roi128_bs2_lr0.00015/checkpoints/best.pt,runs/stage2/20260101_000333_roi128_bs2_lr0.00015/checkpoints/best.pt,runs/stage2/20260101_053221_roi128_bs2_lr0.00015/checkpoints/best.pt,runs/stage2/20260102_074900_roi128_bs2_lr0.00015/checkpoints/best.pt"
+PROP_VAL="results/roi_proposals/stage1_20260102_thr0p35/val_roi128.csv"
+
+# none
+python -u src/train/eval_stage2_full_from_roiproposal.py --rc_filter none \
+  --full_root data/preprocessed/npy_full_v1/val --val_list data/splits/val.txt \
+  --proposal_csv "$PROP_VAL" --ckpts "$CKPTS" --roi_size 128 --base_channels 48 \
+  --out_dir results/full_stage1roi/mixed_rc_none --save_nii
+
+# size-only ablation
+python -u src/train/eval_stage2_full_from_roiproposal.py --rc_filter minvox --rc_min_vox 120 \
+  --full_root data/preprocessed/npy_full_v1/val --val_list data/splits/val.txt \
+  --proposal_csv "$PROP_VAL" --ckpts "$CKPTS" --roi_size 128 --base_channels 48 \
+  --out_dir results/full_stage1roi/mixed_rcmin120 --save_nii
+
+# default hybrid
+python -u src/train/eval_stage2_full_from_roiproposal.py --rc_filter hybrid --rc_min_vox 90 \
+  --lcf_model results/lcf/lcf_rc.pt --lcf_thr 0.46 \
+  --full_root data/preprocessed/npy_full_v1/val --val_list data/splits/val.txt \
+  --proposal_csv "$PROP_VAL" --ckpts "$CKPTS" --roi_size 128 --base_channels 48 \
+  --out_dir results/full_stage1roi/final_hybrid_rcmin90_thr0.46 --save_nii
+
+### 8.2 Lesion-wise evaluation (Table 9)
+python scripts/eval_lesionwise_val.py \
+  --val_list data/splits/val.txt \
+  --gt_npz_root data/preprocessed/npy_full_v1/val --gt_root . \
+  --pred_dir results/full_stage1roi/final_hybrid_rcmin90_thr0.46/nii \
+  --out_csv results/lesionwise/lesionwise_final_hybrid_rcmin90_thr0.46.csv
+
+
+## 9) Notes on evaluation
 Primary development metric: mean(WT, TC, ET) (voxel-wise Dice).
-RC is reported separately; an RC-specific connected-component filtering rule is applied with rc_min_vox = 120.
-To better characterize RC fragmentation and false positives, we also report component-level (connected-component) statistics (see table7_rc_component_stats.csv).
+RC is reported separately. Our default RC suppression uses a hybrid post-processing: first applying the learned component filter (LCF, lcf_thr=0.46) on predicted RC components, then removing residual small RC components with rc_min_vox=90. Size-only filtering with rc_min_vox=120 is reported as an ablation/analysis setting.
+To better characterize RC fragmentation and false positives, we also report component-level statistics (see table7_rc_component_stats.csv).
 
 ## 10) Data availability
 
