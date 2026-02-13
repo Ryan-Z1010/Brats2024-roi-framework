@@ -1,4 +1,4 @@
-## A Two-Stage ROI-Guided Framework with Mixed Ensembling and RC-Specific Post-processing for Post-Treatment Glioma Subregion Segmentation on BraTS 2024 GLI
+## A Two-Stage ROI-Guided Framework with RC False-Positive Suppression for BraTS 2024 Post-Treatment Glioma Subregion Segmentation
 
 It includes the training/evaluation code, configuration files, split lists, ROI proposal CSVs, and table-generation scripts used to produce the results reported in the paper (internal patient-level split: 1206 train / 144 val).
 
