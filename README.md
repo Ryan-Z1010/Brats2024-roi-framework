@@ -164,6 +164,7 @@ python scripts/eval_lesionwise_val.py \
 Primary development metric: mean(WT, TC, ET) (voxel-wise Dice).
 RC is reported separately. Our default RC suppression uses a hybrid post-processing: first applying the learned component filter (LCF, lcf_thr=0.46) on predicted RC components, then removing residual small RC components with rc_min_vox=90. Size-only filtering with rc_min_vox=120 is reported as an ablation/analysis setting.
 To better characterize RC fragmentation and false positives, we also report component-level statistics (see table7_rc_component_stats.csv).
+LCF training (RC false-positive filtering). We run the Stage-2 ROI ensemble on the training split to obtain predicted RC connected components (26-connectivity). Each predicted RC component is labeled positive if it has any voxel overlap with the ground-truth RC, and negative otherwise. Component features are extracted from the RC probability map and the component’s spatial relation to the predicted TC/WT regions (distance transforms). A tiny MLP is trained with class-imbalance weighting; the inference threshold lcf_thr=0.46 is selected on the validation split.
 
 ## 10) Data availability
 
