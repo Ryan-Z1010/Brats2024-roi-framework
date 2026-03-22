@@ -1,0 +1,15 @@
+{
+  "stage1_ckpt": "runs/stage1/20260309_181947_coarse96_bs2_lr0.0002/checkpoints/best.pt",
+  "stage1_config": "configs_split2/stage1_coarse96_split2.yaml",
+  "coarse_root": "data/preprocessed/npy_coarse96_split2_v1/val",
+  "full_root": "data/preprocessed/npy_full_split2_v1/val",
+  "split_list": "data/splits_split2/val.txt",
+  "split": "val",
+  "thr": 0.35,
+  "roi_size": 128,
+  "n_cases": 144,
+  "coverage_mean": 0.9994575179892595,
+  "coverage_min": 0.9816074766355141,
+  "n_fallback": 0,
+  "out_csv": "results/roi_proposals/stage1_split2_thr0p35/val_roi128.csv"
+}

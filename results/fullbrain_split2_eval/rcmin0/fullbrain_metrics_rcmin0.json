@@ -1,0 +1,29 @@
+{
+  "meta": {
+    "full_root": "data/preprocessed/npy_full_split2_v1/val",
+    "val_list": "data/splits_split2/val.txt",
+    "roi_size": 128,
+    "stride": 64,
+    "rc_min_vox": 0,
+    "base_channels": 48,
+    "ckpts": [
+      "runs/stage2_fullbrain/20260311_231228_fullbrain128_bs2_lr0.00015/checkpoints/best.pt"
+    ],
+    "n_cases": 144,
+    "sec_per_case_mean": 2.8070319808191724,
+    "sec_per_case_p90": 2.84496693611145,
+    "peak_gpu_gb_mean": 3.070006847381592,
+    "peak_gpu_gb_max": 3.070006847381592
+  },
+  "mean_metrics": {
+    "dice_1_netc": 0.655422241957401,
+    "dice_2_snf_h": 0.8577488632620297,
+    "dice_3_et": 0.7008474545854637,
+    "dice_4_rc": 0.6440344147385686,
+    "WT": 0.8671298953458754,
+    "TC": 0.6750549179985041,
+    "ET": 0.7008474545854637,
+    "RC": 0.6440344147385686,
+    "mean_wt_tc_et": 0.7476774226432812
+  }
+}

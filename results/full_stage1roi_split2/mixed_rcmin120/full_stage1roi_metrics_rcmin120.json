@@ -1,0 +1,28 @@
+{
+  "meta": {
+    "full_root": "data/preprocessed/npy_full_split2_v1/val",
+    "val_list": "data/splits_split2/val.txt",
+    "proposal_csv": "results/roi_proposals/stage1_split2_thr0p35/val_roi128.csv",
+    "roi_size": 128,
+    "rc_min_vox": 120,
+    "base_channels": 48,
+    "ckpts": [
+      "runs/stage2/20260309_190833_roi128_bs2_lr0.00015/checkpoints/best.pt",
+      "runs/stage2/20260310_054945_roi128_bs2_lr0.00015/checkpoints/best.pt",
+      "runs/stage2/20260311_061917_roi128_bs2_lr0.00015/checkpoints/best.pt",
+      "runs/stage2/20260311_155414_roi128_bs2_lr0.00015/checkpoints/best.pt"
+    ],
+    "n_cases": 144
+  },
+  "mean_metrics": {
+    "dice_1_netc": 0.7027341753329632,
+    "dice_2_snf_h": 0.8940617940788782,
+    "dice_3_et": 0.7387053773693609,
+    "dice_4_rc": 0.7111823386483177,
+    "WT": 0.9021374815626899,
+    "TC": 0.7186212289439499,
+    "ET": 0.7387053773693609,
+    "RC": 0.7111823386483177,
+    "mean_wt_tc_et": 0.7864880292920002
+  }
+}
